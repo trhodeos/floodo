@@ -1,6 +1,7 @@
 # floodo
 
-A Flutter TODO list
+A TODO list app written in Flutter, mainly to become more comfortable with
+Dart, Flutter, and Firebase.
 
 ## Getting Started
 
