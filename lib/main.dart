@@ -15,6 +15,12 @@ class MyApp extends StatelessWidget {
   }
 }
 
+class TodoItem {
+  String text;
+
+  TodoItem(this.text);
+}
+
 class FloodoList extends StatefulWidget {
   FloodoList({Key key, this.title}) : super(key: key);
 
@@ -25,23 +31,29 @@ class FloodoList extends StatefulWidget {
 }
 
 class _FloodoListState extends State<FloodoList> {
-  var items = ['test', 'two', 'three'];
+  var items = [];
 
-  Widget buildItem(name) {
-    return new Dismissible(onDismissed: (DismissDirection d) {
+  Widget buildItem(item) {
+    return new Dismissible(onDismissed: (d) {
       setState(() {
-        items.remove(name);
+        items.remove(item);
       });
-    }, child: new ListTile(title: new Text(name)), key: new ObjectKey(name));
+    },
+        child: new ListTile(title: new Text(item.text)),
+        key: new ObjectKey(item));
   }
 
   @override
   Widget build(BuildContext context) {
+    var itemWidgets = items.map(buildItem).toList();
+    itemWidgets.add(
+        new TextField(onSubmitted: (text) =>
+            setState(() => items.add(new TodoItem(text)))));
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(widget.title),
       ),
-      body: new ListView(children: items.map(buildItem).toList(),),
+      body: new Column(children: itemWidgets),
     );
   }
 }
