@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:sqflite/sqflite.dart';
-import 'package:floodo/todo_data.dart';
+import 'package:floodo/data/todo_data.dart';
 
 final String tableTodo = "todo";
 final String columnId = "_id";
