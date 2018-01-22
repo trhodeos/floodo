@@ -50,7 +50,7 @@ class _TodoListState extends State<TodoList> implements TodoListViewContract {
   @override
   void initState() {
     super.initState();
-    _presenter.loadTodos();
+    _presenter.load();
   }
 
   @override
@@ -65,8 +65,18 @@ class _TodoListState extends State<TodoList> implements TodoListViewContract {
     // TODO: implement onLoadTodosError
   }
 
+  _removeItem(Todo todo) {
+    setState(() {
+      _todos.remove(todo);
+      _presenter.remove(todo);
+    });
+  }
+
   _buildTodoList() {
-    return _todos.map((t) => new _TodoListItem(t)).toList();
+    return _todos.map((t) => new Dismissible(
+        key: new ObjectKey(t),
+        onDismissed: (d) => _removeItem(t),
+        child: new _TodoListItem(t))).toList();
   }
 
   @override

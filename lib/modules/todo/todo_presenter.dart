@@ -14,12 +14,16 @@ class TodoListPresenter {
     _repository = new Injector().todoRepository;
   }
 
-  void loadTodos() {
+  void load() {
     assert(_view != null);
 
     _repository.fetch().then(_view.onLoadTodosComplete).catchError((onError) {
       print(onError);
       _view.onLoadTodosError();
     });
+  }
+
+  void remove(Todo todo) {
+    _repository.markAsDone(todo);
   }
 }

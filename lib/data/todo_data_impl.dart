@@ -10,7 +10,7 @@ final String tableTodo = "todo";
 final String columnId = "_id";
 final String columnTitle = "title";
 final String columnEnteredTime = "entered_time_ms";
-final String columnCompletionTime = "finished_time_ms";
+final String columnDone = "done";
 
 
 Map _toSqlMap(Todo todo) {
@@ -20,6 +20,7 @@ Map _toSqlMap(Todo todo) {
     map[columnId] = todo.id;
   }
   map[columnEnteredTime] = new DateTime.now().millisecondsSinceEpoch;
+  map[columnDone] = todo.done ? 1 : 0;
   return map;
 }
 
@@ -27,6 +28,7 @@ Todo _fromSqlMap(Map map) {
   return new Todo(
     id: map[columnId],
     title: map[columnTitle],
+    done: map[columnDone] == 1 ? true : false,
   );
 }
 
@@ -43,7 +45,7 @@ create table $tableTodo (
   $columnId integer primary key autoincrement, 
   $columnTitle text not null,
   $columnEnteredTime integer not null,
-  $columnCompletionTime integer)
+  $columnDone integer not null)
 ''');
         }));
   }
@@ -57,13 +59,20 @@ create table $tableTodo (
   @override
   Future<List<Todo>> fetch() async {
     List<Map> maps = await db.then((d) => d.query(tableTodo,
-        columns: [columnId, columnEnteredTime, columnCompletionTime, columnTitle],
-        where: "$columnCompletionTime IS NULL"));
+        columns: [columnId, columnEnteredTime, columnDone, columnTitle],
+        where: "$columnDone == 0"));
     return new Future.value(maps.map((m) => _fromSqlMap(m)).toList());
   }
 
   @override
-  Future remove(Todo remove) async {
-    return db.then((d) => d.delete(tableTodo, where: "$columnId = ?", whereArgs: [remove.id]));
+  Future markAsDone(Todo remove) async {
+    Todo newTodo = new Todo(id: remove.id, title: remove.title, done: true);
+    return db.then((d) {
+      d.update(
+          tableTodo,
+          _toSqlMap(newTodo),
+          where: "$columnId = ?",
+          whereArgs: [newTodo.id]);
+    });
   }
 }

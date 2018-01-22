@@ -19,7 +19,8 @@ class MockTodoRepository implements TodoRepository {
     return new Future.value(new Todo(id: nextId++, title: todo.title));
   }
 
-  Future remove(Todo remove) {
+  @override
+  Future markAsDone(Todo remove) {
     kTodos.removeWhere((todo) => todo.id == remove.id);
     return new Future.value();
   }

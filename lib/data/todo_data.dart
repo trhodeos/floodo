@@ -11,7 +11,7 @@ class Todo {
 abstract class TodoRepository {
   Future<List<Todo>> fetch();
   Future<Todo> create(Todo push);
-  Future remove(Todo remove);
+  Future markAsDone(Todo remove);
 }
 
 class FetchTodoException implements Exception {
