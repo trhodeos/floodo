@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:sqflite/sqflite.dart';
-
+import 'package:floodo/todo_data.dart';
 
 final String tableTodo = "todo";
 final String columnId = "_id";
@@ -8,36 +8,21 @@ final String columnTitle = "title";
 final String columnEnteredTime = "entered_time_ms";
 final String columnCompletionTime = "finished_time_ms";
 
-class Todo {
-  int id;
-  String title;
-  DateTime enteredTime;
-  // If completionTime is not null, task is finished
-  DateTime completionTime;
 
-  Map toMap() {
-    Map map = {};
-    map[columnTitle] = title;
-    map[columnEnteredTime] = enteredTime.millisecondsSinceEpoch;
-    if (completionTime != null) {
-      map[columnCompletionTime] = completionTime.millisecondsSinceEpoch;
-    }
-    if (id != null) {
-      map[columnId] = id;
-    }
-    return map;
+Map _toMap(Todo todo) {
+  Map map = {};
+  map[columnTitle] = todo.title;
+  if (todo.id != null) {
+    map[columnId] = todo.id;
   }
+  return map;
+}
 
-  Todo(this.title, this.enteredTime);
-
-  Todo.fromMap(Map map) {
-    id = map[columnId];
-    title = map[columnTitle];
-    enteredTime = new DateTime.fromMillisecondsSinceEpoch(map[columnEnteredTime]);
-    if (map.containsKey(columnCompletionTime) && map[columnCompletionTime] != null) {
-      completionTime = new DateTime.fromMillisecondsSinceEpoch(map[columnCompletionTime]);
-    }
-  }
+Todo _fromMap(Map map) {
+  return new Todo(
+    id: map[columnId],
+    title: map[columnTitle],
+  );
 }
 
 class TodoProvider {
@@ -57,8 +42,8 @@ create table $tableTodo (
   }
 
   Future<Todo> insert(Todo todo) async {
-    todo.id = await db.insert(tableTodo, todo.toMap());
-    return todo;
+    var id = await db.insert(tableTodo, _toMap(todo));
+    return new Todo(id: id, title: todo.title);
   }
 
   Future<Todo> getTodo(int id) async {
@@ -67,7 +52,7 @@ create table $tableTodo (
         where: "$columnId = ?",
         whereArgs: [id]);
     if (maps.length > 0) {
-      return new Todo.fromMap(maps.first);
+      return _fromMap(maps.first);
     }
     return null;
   }
@@ -76,7 +61,7 @@ create table $tableTodo (
     List<Map> maps = await db.query(tableTodo,
         columns: [columnId, columnEnteredTime, columnCompletionTime, columnTitle],
         where: "$columnCompletionTime IS NULL");
-    return maps.map((m) => new Todo.fromMap(m));
+    return maps.map((m) => _fromMap(m));
   }
 
   Future<int> deleteTodo(int id) async {
@@ -84,7 +69,7 @@ create table $tableTodo (
   }
 
   Future<int> update(Todo todo) async {
-    return await db.update(tableTodo, todo.toMap(),
+    return await db.update(tableTodo, _toMap(todo),
         where: "$columnId = ?", whereArgs: [todo.id]);
   }
 
