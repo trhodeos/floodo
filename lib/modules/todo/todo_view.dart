@@ -65,7 +65,9 @@ class _TodoListState extends State<TodoList> implements TodoListViewContract {
     // TODO: implement onLoadTodosError
   }
 
-  _buildTodoList() => _todos.map((t) => new _TodoListItem(t)).toList();
+  _buildTodoList() {
+    return _todos.map((t) => new _TodoListItem(t)).toList();
+  }
 
   @override
   Widget build(BuildContext context) {

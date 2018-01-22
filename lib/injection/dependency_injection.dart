@@ -1,4 +1,5 @@
-import 'package:floodo/data/todo_dart_mock.dart';
+import 'package:floodo/data/todo_data_impl.dart';
+import 'package:floodo/data/todo_data_mock.dart';
 import 'package:floodo/data/todo_data.dart';
 
 
@@ -23,7 +24,8 @@ class Injector {
 
   TodoRepository get todoRepository {
     switch(_flavor) {
-      case Flavor.mock: return new MockTodoRepository();
+      case Flavor.prod:
+        return new SqliteTodoRepository();
       default: return new MockTodoRepository();
     }
   }

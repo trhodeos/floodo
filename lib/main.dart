@@ -5,7 +5,7 @@ import 'package:floodo/modules/todo/todo_view.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  Injector.configure(Flavor.mock);
+  Injector.configure(Flavor.prod);
 
   runApp(new FloodoApp());
 }
