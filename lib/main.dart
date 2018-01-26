@@ -1,11 +1,11 @@
 
-import 'package:floodo/injection/dependency_injection.dart';
-import 'package:floodo/modules/todo/todo_view.dart';
+import 'package:floodo/module/module.dart';
+import 'package:floodo/ui/todo_list.dart';
 
 import 'package:flutter/material.dart';
 
 void main() {
-  Injector.configure(Flavor.prod);
+  serviceLocator = new ServiceLocator.fake();
 
   runApp(new FloodoApp());
 }
@@ -20,7 +20,7 @@ class FloodoApp extends StatelessWidget {
       theme: new ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: new TodoPage()
+      home: new TodoListPage()
     );
   }
 }
